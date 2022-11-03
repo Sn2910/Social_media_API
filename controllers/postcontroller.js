@@ -1,4 +1,5 @@
 const Post = require("../models/Post")
+const User = require("../models/User")
 // create new post
 const createPost = async(req, res) =>{
     const newPost = new Post(req.body)
@@ -57,13 +58,29 @@ const likedPost= async(req, res)=>{
    res.status(500).json(err)
     }
 }
+//get all posts
 const getPosts = async(req,res)=>{
     const posts = await Post.find({})
     res.status(200).json(posts)
 }
+//timeline posts
 const timelinePosts =async(req, res)=>{
-    const currentUser= await Post.findById(req.body.userId)
-    console.log(currentUser)
+
+    try {
+        const currentUser = await User.findById(req.body.userId)
+        console.log(currentUser)
+        const userPosts = await Post.find({userId: currentUser._id})
+        const friendsPost =  await Promise.all(
+            currentUser.followings.map((friendId)=>{
+               return Post.find({userId: friendId})
+            })
+        )
+        res.status(200).json(userPosts.concat(...friendsPost))
+    } catch (err) {
+        res.status(500).json(err)
+        
+    }
+ 
 }
 
 module.exports = {createPost, updatePost,deletePost,likedPost,getPosts,timelinePosts}
