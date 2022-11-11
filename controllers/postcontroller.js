@@ -63,11 +63,11 @@ const getPosts = async(req,res)=>{
     const posts = await Post.find({})
     res.status(200).json(posts)
 }
-//timeline posts
+//get timeline posts
 const timelinePosts =async(req, res)=>{
 
     try {
-        const currentUser = await User.findById(req.body.userId)
+        const currentUser = await User.findById(req.params.userId)
         console.log(currentUser)
         const userPosts = await Post.find({userId: currentUser._id})
         const friendsPost =  await Promise.all(
@@ -82,5 +82,20 @@ const timelinePosts =async(req, res)=>{
     }
  
 }
+//get user posts
+const userPosts =async(req, res)=>{
 
-module.exports = {createPost, updatePost,deletePost,likedPost,getPosts,timelinePosts}
+    try {
+        const currentUser = await User.findById(req.params.userId)
+        console.log(currentUser)
+        const userOwnPost = await Post.find({userId: currentUser._id})
+       
+        res.status(200).json(userOwnPost)
+    } catch (err) {
+        res.status(500).json(err)
+        
+    }
+ 
+}
+
+module.exports = {createPost, updatePost,deletePost,likedPost,getPosts,timelinePosts,userPosts}

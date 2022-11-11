@@ -6,7 +6,7 @@ const router = require('express').Router()
 //delete user
 router.delete("/:id", deleteUser)
 //get a user
-router.get("/:id", getUserById)
+router.get("/", getUserById)
 //follow a user
 router.put("/:id/follow", userFollowers)
 //unfollow a user
